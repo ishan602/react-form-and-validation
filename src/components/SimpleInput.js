@@ -1,49 +1,33 @@
-import React, { useState } from 'react';
+import InputHook from '../hooks/input-hook';
 
 const SimpleInput = (props) => {
-  const [enteredName, setName] = useState('');
-  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+  const {
+    enteredValue: enteredName,
+    isTouched: enteredNameTouched,
+    enteredValueIsValid: enteredNameIsValid,
+    onChangeHandler: onChangeInputHandler,
+    onBlurHandler: onBlurInputHandler,
+    resetInput: resetInputHandler,
+  } = InputHook((value) => value.trim() !== '');
 
-  const [enteredEmail, setEnteredEmail] = useState('');
-  const [enteredEmailTouched, setEnteredEmailTouched] = useState(false);
-
-  const enteredNameIsValid = enteredName.trim() !== '';
-  const enteredEmailIsValid = enteredEmail.includes('@');
+  const {
+    enteredValue: enteredEmail,
+    isTouched: enteredEmailTouched,
+    enteredValueIsValid: enteredEmailIsValid,
+    onChangeHandler: onChangeEmailHandler,
+    onBlurHandler: onBlurEmailHandler,
+    resetInput: resetEmailHandler,
+  } = InputHook((value) => value.includes('@'));
 
   let formIsValid = false;
   if (enteredNameIsValid && enteredEmailIsValid) {
-    console.log('isValid');
     formIsValid = true;
   }
 
-  const onBlurHandler = () => {
-    setEnteredNameTouched(true);
-  };
-
-  const onChangeInputHandler = (event) => {
-    setName(event.target.value);
-  };
-
-  const onChangeEmailHandler = (event) => {
-    setEnteredEmail(event.target.value);
-  };
-
-  const onBlurEmailHandler = () => {
-    setEnteredEmailTouched(true);
-  };
-
   const formSubmitHandler = (event) => {
     event.preventDefault();
-    setEnteredNameTouched(true);
-    if (!enteredNameIsValid) {
-      return;
-    }
-    console.log(enteredName);
-
-    setName('');
-    setEnteredEmail('');
-    setEnteredNameTouched(false);
-    setEnteredEmailTouched(false);
+    resetInputHandler();
+    resetEmailHandler();
   };
 
   const inputClasses =
@@ -63,7 +47,7 @@ const SimpleInput = (props) => {
           id='name'
           value={enteredName}
           onChange={onChangeInputHandler}
-          onBlur={onBlurHandler}
+          onBlur={onBlurInputHandler}
         />
       </div>
       {!enteredNameIsValid && enteredNameTouched && (
@@ -83,7 +67,7 @@ const SimpleInput = (props) => {
         <p>Please entered a valid value</p>
       )}
       <div className='form-actions'>
-        <button type='button' disabled={!formIsValid}>
+        <button type='submit' disabled={!formIsValid}>
           Submit
         </button>
       </div>
